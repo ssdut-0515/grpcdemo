@@ -1,0 +1,77 @@
+buildscript {
+	repositories {
+	    maven {
+	    //   url "https://nexus.devops.viewchain.net/repository/maven-public/"
+	    //   credentials {
+	    //   		username "${mavenUser}"
+	    //   		password "${mavenPwd}"
+	    //   }
+		url 'http://maven.aliyun.com/nexus/content/groups/public'
+	    }
+	}
+	ext {
+		springBootVersion = '1.5.4.RELEASE'
+	}
+	dependencies {
+	    classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.1'
+	    classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
+	    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
+	    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin:'base'
+apply plugin: "org.sonarqube"
+
+allprojects {
+    group = 'com.frognew.svc'
+    version = version	
+    repositories {
+        maven {
+	     //  url "https://nexus.devops.viewchain.net/repository/maven-public/"
+	     //  credentials {
+	     //  		username "${mavenUser}"
+	     //  		password "${mavenPwd}"
+	     //  }
+		 url 'http://maven.aliyun.com/nexus/content/groups/public'
+	    }
+    }
+
+	ext {
+		grpcVersion = '1.4.0'
+		grpcSpringBootStarter = '1.1.1.RELEASE'
+		logbackVersion = '1.2.2'
+		slf4jVersion='1.7.25'
+		protocVersion='3.2.0'
+	}
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'com.github.ben-manes.versions'
+    
+    configurations { 
+		all*.exclude group:'com.sun.xml.bind',module:'jaxb-impl'
+		all*.exclude group:'xml-apis',module:'xml-apis'
+		all*.exclude group:'stax',module:'stax-api'
+		all*.exclude group:'org.slf4j',module:'slf4j-log4j12'
+		all*.exclude group:'commons-logging'
+		all*.exclude group:'c3p0'
+    }
+    sourceSets.main.resources.srcDirs += "src/main/java"
+    sourceSets.test.resources.srcDirs += "src/test/java"
+    compileJava {
+        sourceCompatibility=1.8
+        targetCompatibility=1.8
+        options.encoding='UTF-8'
+   }
+   compileTestJava {
+        sourceCompatibility=1.8
+        targetCompatibility=1.8
+        options.encoding='UTF-8'
+   }
+    
+   tasks.eclipse.dependsOn cleanEclipse
+
+}
